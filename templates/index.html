@@ -11,16 +11,21 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
 
-       <!-- TODO IMPORTANT: do not use CDN to serve jquery if we want page to run offline -->
+       <!-- TODO (1) IMPORTANT: do not use CDN to serve jquery if we want page to run offline -->
 
     <title>Admin Chatbot</title>
   </head>
   <body>
+  <div>
+      <button class="btn btn-primary" type="button" onclick="add_new('hbjhvjhv', '12321')">Add New</button>
+  </div>
     <table class="table table-bordered" id="key-val-table">
         <thead>
+        <tr>
             <th>Key</th>
             <th>Value</th>
             <th>Edit</th>
+        </tr>
         </thead>
         <tbody id="key-val-tbody">
 
@@ -38,57 +43,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
-
-    <script>
-        $("document").ready(function(){
-            $.get("http://127.0.0.1:5000/read/values/", function (data, status){
-                for (var i = 0; i < data.length; i++) {
-                    id = data[i]["id"];
-                    key = data[i]["key"];
-                    val = data[i]["value"];
-                    key_data = "<td id='key_"+id+"'>" + key + "</td>";
-                    val_td = "<td id='val_"+id+"'>" + val + "</td>";
-                    edit_btn = "<td><button id='btn_"+id+"' type='button' class='btn btn-primary' onclick='set_edit_row("+id+")'>Edit</button></td>";
-                    new_row = "<tr>" + key_data + val_td + edit_btn + "</tr>";
-                    $("#key-val-tbody").append(new_row);
-                }
-            }, "json");
-        });
-
-        function update_value(id) {
-            if (id != null){
-                key = $("#key_"+id).text();
-                value = $("#input_"+id).val();
-                $.post("http://localhost:5000/update/values/",
-                    {"id": id, "value": value.replace(/\n/gi, "<br>")},
-                    function (data, status) {
-                        if (status === "success") {
-                            val_td = $("#val_"+id);
-                            btn = $("#btn_"+id);
-                            val_td.empty();
-                            val_td.html(data["value"]);
-                            btn.text("Edit");
-                            btn.attr("onclick", "set_edit_row("+id+")");
-                            alert("Successfully updated!");
-                        }
-                        else
-                            alert("Sorry! Could not update!");
-                    },
-                    "json"
-                )
-            }
-        }
-
-        function set_edit_row(id) {
-            val_td = $("#val_"+id);
-            value = val_td.html();
-            val_td.empty();
-            val_td.append("<textarea class='form-control' id='input_"+id+"'></textarea>");
-            $("#input_"+id).val(value.replace(/<br>/gi, "\n"));
-            btn = $("#btn_"+id);
-            btn.text("Save");
-            btn.attr("onclick", "update_value("+id+")");
-        }
-    </script>
+    <script src="../static/scripts/key-val.js"></script>
   </body>
 </html>
