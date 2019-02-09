@@ -17,8 +17,9 @@
   </head>
   <body>
   <div>
-      <button class="btn btn-primary" type="button" onclick="add_new('hbjhvjhv', '12321')">Add New</button>
+      <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#add-new-modal">Add New</button>
   </div>
+  {% include 'add_new_modal.html' %}
     <table class="table table-bordered" id="key-val-table">
         <thead>
         <tr>

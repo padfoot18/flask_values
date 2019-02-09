@@ -67,20 +67,22 @@ def insert_values():
             connection = sqlite3.connect('test.db')
             c = connection.cursor()
             sql = 'INSERT INTO blank_data (`key`, `value`) VALUES("' + key + '", "' + value + '");'
+            print(sql)
             c.execute(sql)
             connection.commit()
             sql = 'select * from blank_data where `key` = "'+key+'";'
+            print(sql)
             c.execute(sql)
             data = c.fetchall()
             formatted_data = [{"id": data[0][0], "key": data[0][1], "value": data[0][2]}, ]
             resp = jsonify(success=True, data=formatted_data)
         except sqlite3.IntegrityError as e:
             print(e)
-            resp = jsonify(success=False, error="Key already exists!")
+            # resp = jsonify(success=False, error="Key already exists!")
         finally:
             if connection:
                 connection.close()
-            return resp
+        return resp
 
 
 @app.route('/delete/values', methods=['POST', ])

@@ -76,16 +76,20 @@ function add_row_in_table(data){
 }
 
 
-function add_new(key, value) {
+function add_new() {
+    key = $("#key_input").val();
+    value = $("#value_input").val();
     if (key != null && value != null){
         $.post(
             "http://localhost:5000/insert/values/",
-            {"key": key, "value": value},
+            {"key": key, "value": value.replace(/\n/gi, "<br>")},
             function (data, status) {
                 if (!data["success"])
                     alert(data["error"]);
-                else
+                else {
                     add_row_in_table(data["data"]);
+                    $("#close_modal").click();
+                }
             },
             "json"
         );
@@ -106,4 +110,3 @@ function delete_value(id) {
         )
     }
 }
-
