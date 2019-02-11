@@ -8,12 +8,12 @@ CORS(app)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return render_template('base.html')
 
 
-@app.route('/admin/')
+@app.route('/key_values/')
 def admin_page():
-    return render_template('index.html')
+    return render_template('key_vals.html', js_files=['key-val.js', ])
 
 
 @app.route('/read/values/')
@@ -67,18 +67,16 @@ def insert_values():
             connection = sqlite3.connect('test.db')
             c = connection.cursor()
             sql = 'INSERT INTO blank_data (`key`, `value`) VALUES("' + key + '", "' + value + '");'
-            print(sql)
             c.execute(sql)
             connection.commit()
             sql = 'select * from blank_data where `key` = "'+key+'";'
-            print(sql)
             c.execute(sql)
             data = c.fetchall()
-            formatted_data = [{"id": data[0][0], "key": data[0][1], "value": data[0][2]}, ]
+            formatted_data = {"id": data[0][0], "key": data[0][1], "value": data[0][2]}
             resp = jsonify(success=True, data=formatted_data)
         except sqlite3.IntegrityError as e:
             print(e)
-            # resp = jsonify(success=False, error="Key already exists!")
+            resp = jsonify(success=False, error="Key already exists!")
         finally:
             if connection:
                 connection.close()
@@ -104,6 +102,45 @@ def delete_values():
             if connection:
                 connection.close()
             return resp
+
+
+@app.route('/para/')
+def read_para():
+    try:
+        conn = sqlite3.connect('test.db')
+        c = conn.cursor()
+        c.execute('select * from paragraph')
+        paragraph = c.fetchall()
+        conn.commit()
+    except sqlite3.IntegrityError:
+        return {"error"}
+    except Exception as exception:
+        print(exception)
+    finally:
+        if conn:
+            conn.close()
+    return render_template('view_para.html', para = paragraph[0][0], js_files=['para.js', ])
+
+
+@app.route('/update/',methods=['POST'])
+def update():
+    if request.form['str']:
+        new_paragraph = request.form['str']
+        print(new_paragraph)
+    try:
+        conn = sqlite3.connect('test.db')
+        c = conn.cursor()
+        c.execute('UPDATE paragraph SET para="' + new_paragraph + '";')
+        print(new_paragraph)
+        conn.commit()
+    except Exception as exception:
+        print(exception)
+
+    finally:
+        if conn:
+            conn.close()
+
+    return new_paragraph
 
 
 if __name__ == '__main__':
