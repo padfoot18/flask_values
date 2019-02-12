@@ -74,12 +74,16 @@ function submit_para(){
     var new_str = document.getElementById('paragraph').value;
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            document.getElementById('paragraph').value = this.responseText;
-            alert("Update Success");
+            if(document.getElementById('paragraph').value == this.responseText) {
+                document.getElementById('paragraph').value = this.responseText
+                alert("Update Success");
+            }
+            else
+                alert("Something went wrong");
             cancel_edit();
         }
     };
-    xhttp.open("POST", "http://127.0.0.1:5000/update/", true);
+    xhttp.open("POST", "http://127.0.0.1:5000/edit_para/", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send('str='+new_str);
     str = new_str;
